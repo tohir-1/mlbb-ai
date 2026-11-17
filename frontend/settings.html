@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings — MLBB AI UZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="sidebar-overlay"></div>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header"><a href="admin.html" class="logo" title="Admin Panel">MLBB AI <span>UZ</span></a></div>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Bosh sahifa</a>
+        <a href="ai-chat.html" class="nav-link">AI Chat</a>
+        <a href="heroes.html" class="nav-link">Herolar</a>
+        <a href="settings.html" class="nav-link active">Settings</a>
+      </nav>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-toggle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div style="font-weight:600">MLBB Settings Assistant</div>
+        <div class="topbar-actions"><div class="auth-area"></div></div>
+      </header>
+      <main class="content">
+        <h1 class="section-title">Settings Builder</h1>
+        <p class="section-sub">Telefoningiz va playstyle ga mos sozlamalar tavsiyasi. O'yin ichida qo'lda o'zgartirasiz.</p>
+        <div class="card mb-3" style="max-width:560px">
+          <div class="mb-2">
+            <label class="label">Telefon modeli</label>
+            <input class="input" id="phone" placeholder="Masalan: Redmi Note 13 Pro" />
+          </div>
+          <div class="mb-2">
+            <label class="label">RAM (GB)</label>
+            <select class="input" id="ram">
+              <option value="3">3</option><option value="4">4</option><option value="6" selected>6</option>
+              <option value="8">8</option><option value="12">12+</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="label">Ustuvorlik</label>
+            <select class="input" id="priority">
+              <option value="fps">Maksimal FPS</option>
+              <option value="balanced">Muvozanat</option>
+              <option value="graphics">Yuqori grafika</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="label">Asosiy role / hero</label>
+            <input class="input" id="hero" placeholder="Fanny / Assassin" />
+          </div>
+          <button class="btn btn-primary" id="recommendBtn">Tavsiya olish</button>
+        </div>
+        <div id="result"></div>
+      </main>
+    </div>
+  </div>
+  <script src="js/admin-store.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('recommendBtn').addEventListener('click', async () => {
+      const body = {
+        phoneModel: document.getElementById('phone').value,
+        ram: document.getElementById('ram').value,
+        priority: document.getElementById('priority').value,
+        mainHero: document.getElementById('hero').value
+      };
+      try {
+        const r = await apiClient.recommendSettings(body);
+        document.getElementById('result').innerHTML = `
+          <div class="card">
+            <h2 class="mb-2">Tavsiya etilgan sozlamalar</h2>
+            <h3 class="mb-1 text-primary">Graphics</h3>
+            <ul style="list-style:none;margin-bottom:1rem">
+              ${Object.entries(r.graphics).map(([k,v]) => `<li class="mb-1"><span class="text-muted">${k}:</span> <strong>${v}</strong></li>`).join('')}
+            </ul>
+            <h3 class="mb-1 text-accent">Control</h3>
+            <ul style="list-style:none;margin-bottom:1rem">
+              ${Object.entries(r.control).map(([k,v]) => `<li class="mb-1"><span class="text-muted">${k}:</span> <strong>${v}</strong></li>`).join('')}
+            </ul>
+            <h3 class="mb-1">Maslahatlar</h3>
+            <ul>${r.tips.map(t => `<li class="mb-1 text-muted">${escapeHtml(t)}</li>`).join('')}</ul>
+            <p class="mt-2 text-muted" style="font-size:0.85rem">${escapeHtml(r.note)}</p>
+          </div>
+        `;
+      } catch (e) {
+        toast(e.message);
+      }
+    });
+  </script>
+</body>
+</html>

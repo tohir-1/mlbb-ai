@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Counterlar — MLBB AI UZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="sidebar-overlay"></div>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header"><a href="admin.html" class="logo" title="Admin Panel">MLBB AI <span>UZ</span></a></div>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Bosh sahifa</a>
+        <a href="ai-chat.html" class="nav-link">AI Chat</a>
+        <a href="heroes.html" class="nav-link">Herolar</a>
+        <a href="counters.html" class="nav-link active">Counterlar</a>
+      </nav>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-toggle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div style="font-weight:600">Counter System</div>
+        <div class="topbar-actions"><div class="auth-area"></div></div>
+      </header>
+      <main class="content">
+        <h1 class="section-title">Counter tanlash</h1>
+        <p class="section-sub">Hero tanlang — best counters, weak against va synergy chiqadi.</p>
+        <select class="input mb-3" id="heroSelect" style="max-width:280px"><option value="">Hero tanlang...</option></select>
+        <div id="result"></div>
+      </main>
+    </div>
+  </div>
+  <script src="js/admin-store.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    apiClient.getHeroes().then(({ heroes }) => {
+      const sel = document.getElementById('heroSelect');
+      heroes.forEach(h => {
+        const o = document.createElement('option');
+        o.value = h.id; o.textContent = h.name + ' (' + h.role + ')';
+        sel.appendChild(o);
+      });
+    });
+    document.getElementById('heroSelect').addEventListener('change', async e => {
+      const id = e.target.value;
+      if (!id) return;
+      try {
+        const data = await apiClient.getCounters(id);
+        document.getElementById('result').innerHTML = `
+          <h2 class="mb-2">${escapeHtml(data.hero.name)} counterlari</h2>
+          <h3 class="mb-1 text-primary">Best Counters</h3>
+          <div class="grid grid-auto mb-3">${(data.bestCounters||[]).map(c => c.counterHero ? `
+            <a href="hero-details.html?id=${c.counterHero.id}" class="card hero-card">
+              <div class="avatar">${c.counterHero.name.slice(0,2)}</div>
+              <h3>${escapeHtml(c.counterHero.name)}</h3>
+              <p class="text-muted" style="font-size:0.8rem">${escapeHtml(c.reason||'')}</p>
+            </a>` : '').join('') || '<p class="text-muted">Ma\'lumot yo\'q</p>'}</div>
+          <h3 class="mb-1 text-accent">Best Teammates</h3>
+          <div class="grid grid-auto">${(data.bestTeammates||[]).map(s => s.synergyHero ? `
+            <a href="hero-details.html?id=${s.synergyHero.id}" class="card hero-card">
+              <div class="avatar">${s.synergyHero.name.slice(0,2)}</div>
+              <h3>${escapeHtml(s.synergyHero.name)}</h3>
+              <p class="text-muted" style="font-size:0.8rem">${escapeHtml(s.reason||'')}</p>
+            </a>` : '').join('') || '<p class="text-muted">Ma\'lumot yo\'q</p>'}</div>
+          <p class="text-muted mt-2" style="font-size:0.85rem">${escapeHtml(data.note||'')}</p>
+        `;
+      } catch (err) {
+        toast(err.message);
+      }
+    });
+  </script>
+</body>
+</html>

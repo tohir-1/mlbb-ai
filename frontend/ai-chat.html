@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Chat — MLBB AI UZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/chat.css" />
+</head>
+<body>
+  <div class="sidebar-overlay"></div>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="admin.html" class="logo" title="Admin Panel">MLBB AI <span>UZ</span></a>
+      </div>
+      <nav class="nav">
+        <div class="nav-section">
+          <div class="nav-label">Asosiy</div>
+          <a href="index.html" class="nav-link">Bosh sahifa</a>
+          <a href="ai-chat.html" class="nav-link active">AI Chat</a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-label">O'yin</div>
+          <a href="heroes.html" class="nav-link">Herolar</a>
+          <a href="builds.html" class="nav-link">Buildlar</a>
+          <a href="items.html" class="nav-link">Itemlar</a>
+          <a href="counters.html" class="nav-link">Counterlar</a>
+          <a href="meta.html" class="nav-link">META</a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-label">Yordam</div>
+          <a href="settings.html" class="nav-link">Settings</a>
+          <a href="guides.html" class="nav-link">Guides</a>
+          <a href="terminology.html" class="nav-link">Terminlar</a>
+        </div>
+      </nav>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-toggle" aria-label="Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div style="font-weight:600">AI Chat</div>
+        <div class="topbar-actions"><div class="auth-area"></div></div>
+      </header>
+
+      <div class="chat-layout">
+        <aside class="chat-sidebar">
+          <div class="chat-sidebar-header">
+            <button class="btn btn-primary w-full" id="newChatBtn">+ Yangi suhbat</button>
+          </div>
+          <div class="chat-sessions" id="sessionsList">
+            <p class="text-muted" style="padding:1rem;font-size:0.85rem">Kirib, suhbatlaringizni saqlang</p>
+          </div>
+        </aside>
+
+        <div class="chat-main">
+          <div class="chat-messages" id="messages">
+            <div class="chat-empty" id="emptyState">
+              <h2>MLBB AI UZ</h2>
+              <p>Mobile Legends bo'yicha istalgan savolingizni bering.<br>Build, counter, META, settings, strategy...</p>
+              <div class="suggest-grid">
+                <div class="suggest-card" data-q="Fanny uchun eng yaxshi build qanday?">Fanny uchun eng yaxshi build</div>
+                <div class="suggest-card" data-q="Hozirgi META da eng kuchli herolar kim?">Hozirgi META</div>
+                <div class="suggest-card" data-q="Khufra Fanny ni qanday counter qiladi?">Khufra vs Fanny</div>
+                <div class="suggest-card" data-q="Redmi Note 13 Pro, 8GB RAM, Fanny o'ynayman — eng yaxshi settings">Settings tavsiyasi</div>
+                <div class="suggest-card" data-q="Mythical Gloryga solo qanday chiqiladi?">Rank push</div>
+                <div class="suggest-card" data-q="CC nima va qanday himoyalanish mumkin?">CC nima?</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-input-area">
+            <div class="chat-input-wrap">
+              <textarea id="chatInput" placeholder="Savolingizni yozing... (Enter — yuborish, Shift+Enter — yangi qator)" rows="1"></textarea>
+              <button class="btn btn-primary" id="sendBtn" style="height:52px;padding:0 1.25rem">Yuborish</button>
+            </div>
+            <p class="text-muted" style="text-align:center;font-size:0.75rem;margin-top:0.5rem">AI Knowledge Base + database. Real AI API ulangan bo'lsa undan foydalanadi.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/admin-store.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/chat.js"></script>
+</body>
+</html>

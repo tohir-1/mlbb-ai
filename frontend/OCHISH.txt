@@ -1,0 +1,25 @@
+========================================
+  MLBB AI UZ — FAQAT FRONTEND
+========================================
+
+1. Cursor / VS Code da "frontend" papkasini oching
+2. index.html faylini o'ng tugma → Open with Live Server
+   YOKI Live Server extension bilan "Go Live" bosing
+
+3. Brauzerda sayt ochiladi (port 5500 bo'lishi mumkin)
+
+Backend / npm KERAK EMAS.
+AI offline rejimda ishlaydi (Fanny, META, build va h.k.)
+
+Sahifalar:
+- index.html      — Bosh sahifa
+- ai-chat.html    — AI Chat
+- heroes.html     — Herolar
+- meta.html       — META
+- settings.html   — Settings
+- builds.html     — Buildlar
+- items.html      — Itemlar
+- counters.html   — Counterlar
+
+Agar Live Server yo'q bo'lsa:
+VS Code → Extensions → "Live Server" o'rnating (Ritwick Dey)

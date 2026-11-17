@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — MLBB AI UZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem;
+      text-align: center;
+    }
+    .stat-card .num { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg,#8B5CF6,#06B6D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat-card .label { color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }
+    .user-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .user-table th, .user-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+    .user-table th { color: var(--muted); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
+    .lock-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="lock" class="lock-screen">
+    <div class="card" style="width:100%;max-width:380px">
+      <div class="logo" style="text-align:center;margin-bottom:0.5rem;font-size:1.4rem">MLBB AI <span>UZ</span></div>
+      <p class="text-muted" style="text-align:center;margin-bottom:1.25rem;font-size:0.9rem">Admin Panel</p>
+      <div class="mb-2">
+        <label class="label">Login</label>
+        <input class="input" type="text" id="adminUser" placeholder="tohir" value="tohir" />
+      </div>
+      <div class="mb-2">
+        <label class="label">Parol</label>
+        <input class="input" type="password" id="adminPass" placeholder="Parol" />
+      </div>
+      <button class="btn btn-primary w-full" id="unlockBtn">Kirish</button>
+      <p class="text-muted mt-2" style="text-align:center;font-size:0.8rem">
+        
+        <a href="index.html">← Saytga qaytish</a>
+      </p>
+    </div>
+  </div>
+
+  <div id="panel" class="hidden">
+    <div class="sidebar-overlay"></div>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-header"><div class="logo">MLBB AI <span>UZ</span></div></div>
+        <nav class="nav">
+          <div class="nav-section">
+            <div class="nav-label">Admin</div>
+            <a href="admin.html" class="nav-link active">Dashboard</a>
+            <a href="index.html" class="nav-link">Saytga qaytish</a>
+          </div>
+        </nav>
+      </aside>
+      <div class="main">
+        <header class="topbar">
+          <div style="font-weight:600">Admin Panel</div>
+          <div class="topbar-actions">
+            <button class="btn btn-secondary btn-sm" id="logoutAdmin">Chiqish</button>
+          </div>
+        </header>
+        <main class="content">
+          <h1 class="section-title">Statistika</h1>
+          <p class="section-sub">Offline rejim — ma'lumotlar shu brauzer localStorage da saqlanadi</p>
+          <div class="stat-grid" id="stats">
+            <div class="stat-card"><div class="num" id="sUsers">0</div><div class="label">Ro'yxatdan o'tgan</div></div>
+            <div class="stat-card"><div class="num" id="sOnline">0</div><div class="label">Hozir online (taxminiy)</div></div>
+            <div class="stat-card"><div class="num" id="sVisits">0</div><div class="label">Tashriflar (session)</div></div>
+          </div>
+
+          <h2 class="section-title">Foydalanuvchilar</h2>
+          <div class="card" style="padding:0;overflow:auto">
+            <table class="user-table">
+              <thead>
+                <tr><th>Username</th><th>Email</th><th>Role</th><th>Ro'yxat</th><th>Oxirgi kirish</th></tr>
+              </thead>
+              <tbody id="userRows">
+                <tr><td colspan="5" class="text-muted" style="padding:1.5rem">Hali foydalanuvchi yo'q</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-muted mt-2" style="font-size:0.8rem">
+            * Real server yo'qligi sababli faqat shu qurilma/brauzerdagi ro'yxat ko'rinadi.
+            Boshqa odamlar boshqa kompyuterda ro'yxatdan o'tsa, ular shu yerda ko'rinmaydi.
+          </p>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/admin-store.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    const ADMIN_PASS = '34';
+    const lock = document.getElementById('lock');
+    const panel = document.getElementById('panel');
+
+    function isUnlocked() {
+      return sessionStorage.getItem('mlbb_admin') === '1';
+    }
+    function unlock() {
+      sessionStorage.setItem('mlbb_admin', '1');
+      lock.classList.add('hidden');
+      panel.classList.remove('hidden');
+      render();
+    }
+    function lockPanel() {
+      sessionStorage.removeItem('mlbb_admin');
+      location.reload();
+    }
+
+    document.getElementById('unlockBtn').addEventListener('click', () => {
+      const u = (document.getElementById('adminUser').value || '').trim().toLowerCase();
+      const p = document.getElementById('adminPass').value;
+      if (u === 'tohir' && p === ADMIN_PASS) unlock();
+      else toast('Login yoki parol noto\'g\'ri');
+    });
+    document.getElementById('adminPass').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('unlockBtn').click();
+    });
+    document.getElementById('logoutAdmin').addEventListener('click', lockPanel);
+
+    function render() {
+      const s = window.mlbbGetStats ? window.mlbbGetStats() : { totalUsers: 0, online: 0, visits: 0, users: [] };
+      document.getElementById('sUsers').textContent = s.totalUsers;
+      document.getElementById('sOnline').textContent = s.online;
+      document.getElementById('sVisits').textContent = s.visits;
+      const tbody = document.getElementById('userRows');
+      if (!s.users.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-muted" style="padding:1.5rem">Hali foydalanuvchi yo\'q. Register orqali qo\'shiladi.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = s.users.map(u => `
+        <tr>
+          <td><strong>${escapeHtml(u.username || '-')}</strong></td>
+          <td>${escapeHtml(u.email || '-')}</td>
+          <td><span class="badge ${u.role === 'admin' ? 'badge-s' : 'badge-primary'}">${escapeHtml(u.role || 'user')}</span></td>
+          <td class="text-muted">${u.createdAt ? new Date(u.createdAt).toLocaleString() : '-'}</td>
+          <td class="text-muted">${u.lastLogin ? new Date(u.lastLogin).toLocaleString() : '-'}</td>
+        </tr>
+      `).join('');
+    }
+
+    if (isUnlocked()) unlock();
+  </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Herolar — MLBB AI UZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="sidebar-overlay"></div>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header"><a href="admin.html" class="logo" title="Admin Panel">MLBB AI <span>UZ</span></a></div>
+      <nav class="nav">
+        <div class="nav-section">
+          <div class="nav-label">Asosiy</div>
+          <a href="index.html" class="nav-link">Bosh sahifa</a>
+          <a href="ai-chat.html" class="nav-link">AI Chat</a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-label">O'yin</div>
+          <a href="heroes.html" class="nav-link active">Herolar</a>
+          <a href="builds.html" class="nav-link">Buildlar</a>
+          <a href="items.html" class="nav-link">Itemlar</a>
+          <a href="counters.html" class="nav-link">Counterlar</a>
+          <a href="meta.html" class="nav-link">META</a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-label">Yordam</div>
+          <a href="settings.html" class="nav-link">Settings</a>
+          <a href="guides.html" class="nav-link">Guides</a>
+          <a href="terminology.html" class="nav-link">Terminlar</a>
+        </div>
+      </nav>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-toggle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div style="font-weight:600">Herolar</div>
+        <div class="topbar-actions"><div class="auth-area"></div></div>
+      </header>
+      <main class="content">
+        <h1 class="section-title">Barcha herolar</h1>
+        <p class="section-sub">Qidiruv va filter orqali toping</p>
+        <div class="flex gap-2 mb-3" style="flex-wrap:wrap">
+          <input class="input" id="search" placeholder="Hero nomi..." style="max-width:240px" />
+          <select class="input" id="roleFilter" style="max-width:160px">
+            <option value="">Barcha role</option>
+            <option>Tank</option><option>Fighter</option><option>Assassin</option>
+            <option>Mage</option><option>Marksman</option><option>Support</option>
+          </select>
+        </div>
+        <div class="grid grid-auto" id="list">
+          <div class="card skeleton" style="height:140px"></div>
+          <div class="card skeleton" style="height:140px"></div>
+          <div class="card skeleton" style="height:140px"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script src="js/admin-store.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    async function load() {
+      const q = document.getElementById('search').value;
+      const role = document.getElementById('roleFilter').value;
+      try {
+        const { heroes } = await apiClient.getHeroes({ q, role });
+        document.getElementById('list').innerHTML = heroes.map(h => `
+          <a href="hero-details.html?id=${h.id}" class="card hero-card">
+            <div class="avatar">${h.name.slice(0,2).toUpperCase()}</div>
+            <h3>${escapeHtml(h.name)}</h3>
+            <div class="meta">${roleBadge(h.role)} ${h.tier ? tierBadge(h.tier) : ''}</div>
+            <div class="text-muted" style="font-size:0.75rem;margin-top:0.35rem">${h.specialty || ''} · ${h.lane || ''}</div>
+          </a>
+        `).join('') || '<p class="text-muted">Hech narsa topilmadi</p>';
+      } catch (e) {
+        document.getElementById('list').innerHTML = '<p class="text-muted">Xatolik: ' + e.message + '</p>';
+      }
+    }
+    document.getElementById('search').addEventListener('input', () => { clearTimeout(window._t); window._t = setTimeout(load, 300); });
+    document.getElementById('roleFilter').addEventListener('change', load);
+    const params = new URLSearchParams(location.search);
+    if (params.get('q')) document.getElementById('search').value = params.get('q');
+    load();
+  </script>
+</body>
+</html>

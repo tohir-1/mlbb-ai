@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Itemlar — MLBB AI UZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="sidebar-overlay"></div>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header"><a href="admin.html" class="logo" title="Admin Panel">MLBB AI <span>UZ</span></a></div>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Bosh sahifa</a>
+        <a href="ai-chat.html" class="nav-link">AI Chat</a>
+        <a href="heroes.html" class="nav-link">Herolar</a>
+        <a href="items.html" class="nav-link active">Itemlar</a>
+        <a href="meta.html" class="nav-link">META</a>
+      </nav>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-toggle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div style="font-weight:600">Itemlar</div>
+        <div class="topbar-actions"><div class="auth-area"></div></div>
+      </header>
+      <main class="content">
+        <h1 class="section-title">Equipment</h1>
+        <div class="flex gap-2 mb-3" style="flex-wrap:wrap">
+          <input class="input" id="search" placeholder="Item nomi..." style="max-width:200px" />
+          <select class="input" id="cat" style="max-width:160px">
+            <option value="">Barcha</option>
+            <option>Attack</option><option>Magic</option><option>Defense</option><option>Movement</option>
+          </select>
+        </div>
+        <div class="grid grid-auto" id="list"></div>
+      </main>
+    </div>
+  </div>
+  <script src="js/admin-store.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    async function load() {
+      try {
+        const { items } = await apiClient.getItems({ q: document.getElementById('search').value, category: document.getElementById('cat').value });
+        document.getElementById('list').innerHTML = items.map(i => `
+          <div class="card">
+            <h3>${escapeHtml(i.name)}</h3>
+            <div class="meta mb-1"><span class="badge badge-primary">${i.category}</span> <span class="text-muted">${i.price} gold</span></div>
+            <p class="text-muted" style="font-size:0.85rem">${escapeHtml(i.passive || i.description || '')}</p>
+          </div>
+        `).join('') || '<p class="text-muted">Topilmadi</p>';
+      } catch (e) {
+        document.getElementById('list').innerHTML = '<p>' + e.message + '</p>';
+      }
+    }
+    document.getElementById('search').addEventListener('input', () => { clearTimeout(window._t); window._t = setTimeout(load, 300); });
+    document.getElementById('cat').addEventListener('change', load);
+    load();
+  </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ro'yxat — MLBB AI UZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem">
+    <div class="card" style="width:100%;max-width:400px">
+      <div class="logo" style="text-align:center;margin-bottom:1.5rem;font-size:1.5rem">MLBB AI <span>UZ</span></div>
+      <h1 style="text-align:center;margin-bottom:1.5rem;font-size:1.25rem">Ro'yxatdan o'tish</h1>
+      <form id="form">
+        <div class="mb-2">
+          <label class="label">Username</label>
+          <input class="input" id="username" required minlength="3" />
+        </div>
+        <div class="mb-2">
+          <label class="label">Email</label>
+          <input class="input" type="email" id="email" required />
+        </div>
+        <div class="mb-2">
+          <label class="label">Parol</label>
+          <input class="input" type="password" id="password" required minlength="6" />
+        </div>
+        <button class="btn btn-primary w-full" type="submit">Ro'yxatdan o'tish</button>
+      </form>
+      <p class="text-muted mt-2" style="text-align:center;font-size:0.9rem">
+        Allaqachon hisob bormi? <a href="login.html">Kirish</a>
+      </p>
+      <p style="text-align:center;margin-top:1rem"><a href="index.html" class="text-muted">← Bosh sahifa</a></p>
+    </div>
+  </div>
+  <script src="js/admin-store.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('form').addEventListener('submit', async e => {
+      e.preventDefault();
+      try {
+        const data = await apiClient.register({
+          username: document.getElementById('username').value,
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value
+        });
+        setAuth(data.token, data.user);
+        toast('Muvaffaqiyatli!');
+        location.href = 'index.html';
+      } catch (err) {
+        toast(err.message);
+      }
+    });
+  </script>
+</body>
+</html>

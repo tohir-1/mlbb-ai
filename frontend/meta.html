@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>META — MLBB AI UZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="sidebar-overlay"></div>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header"><a href="admin.html" class="logo" title="Admin Panel">MLBB AI <span>UZ</span></a></div>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Bosh sahifa</a>
+        <a href="ai-chat.html" class="nav-link">AI Chat</a>
+        <a href="heroes.html" class="nav-link">Herolar</a>
+        <a href="meta.html" class="nav-link active">META</a>
+        <a href="settings.html" class="nav-link">Settings</a>
+      </nav>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-toggle"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div style="font-weight:600">META Tier List</div>
+        <div class="topbar-actions"><div class="auth-area"></div></div>
+      </header>
+      <main class="content">
+        <h1 class="section-title">META Tier List</h1>
+        <p class="section-sub" id="metaNote">Community / AI Recommendation asosida. Rasmiy win-rate API emas.</p>
+        <div id="tiers"></div>
+      </main>
+    </div>
+  </div>
+  <script src="js/admin-store.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    async function load() {
+      try {
+        const data = await apiClient.getMeta();
+        document.getElementById('metaNote').textContent = 'Manba: ' + (data.dataSource || 'Community') + (data.lastUpdated ? ' · Yangilangan: ' + new Date(data.lastUpdated).toLocaleDateString() : '');
+        const order = ['S+', 'S', 'A', 'B', 'C'];
+        document.getElementById('tiers').innerHTML = order.map(t => {
+          const list = data.tiers[t] || [];
+          if (!list.length) return '';
+          return `<div class="mb-3"><h2 class="mb-1">${tierBadge(t)} Tier</h2>
+            <div class="grid grid-auto">${list.map(m => `
+              <a href="hero-details.html?id=${m.hero.id}" class="card hero-card">
+                <div class="avatar">${m.hero.name.slice(0,2)}</div>
+                <h3>${escapeHtml(m.hero.name)}</h3>
+                <div class="meta">${roleBadge(m.hero.role)}</div>
+                ${m.winRate ? `<div class="text-muted" style="font-size:0.75rem">WR ${m.winRate}%</div>` : ''}
+              </a>`).join('')}</div></div>`;
+        }).join('');
+      } catch (e) {
+        document.getElementById('tiers').innerHTML = '<p class="text-muted">' + e.message + '</p>';
+      }
+    }
+    load();
+  </script>
+</body>
+</html>
